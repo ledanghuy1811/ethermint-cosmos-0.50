@@ -25,11 +25,11 @@ import (
 )
 
 var (
-	regexChainID         = `[a-z]{1,}`
+	regexChainID         = `[a-zA-Z]{1,}`
 	regexEIP155Separator = `_?`
-	regexEIP155          = `[1-9][0-9]*`
-	regexEpochSeparator  = `-{1}`
-	regexEpoch           = `[1-9][0-9]*`
+	regexEIP155          = `([1-9][0-9]*)?`
+	regexEpochSeparator  = `-?`
+	regexEpoch           = `([1-9][0-9]*)?`
 	ethermintChainID     = regexp.MustCompile(fmt.Sprintf(`^(%s)%s(%s)%s(%s)$`,
 		regexChainID,
 		regexEIP155Separator,
@@ -56,7 +56,7 @@ func ParseChainID(chainID string) (*big.Int, error) {
 	}
 
 	matches := ethermintChainID.FindStringSubmatch(chainID)
-	if matches == nil || len(matches) != 4 || matches[1] == "" {
+	if matches == nil || len(matches) != 6 || matches[1] == "" {
 		return nil, errorsmod.Wrapf(ErrInvalidChainID, "%s: %v", chainID, matches)
 	}
 
